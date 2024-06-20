@@ -65,15 +65,8 @@ void f(string s) {
         f(c);
 }
 
-int main() {
-    fill(g[0], g[201], '+');
-    // cin >> N >> M >> K;
-    N = 5, M = 5, K = 25;
-    y = M - 1;
-    if (K < N || (K - N) & 1) {
-        cout << "No\n";
-        return 0;
-    }
+void initialize() {
+    fill(g[0], g[N * 2 + 1], '+');
     g[0][M * 2 - 1] = 'S';
     g[N * 2][M * 2 - 1] = 'G';
 
@@ -88,19 +81,56 @@ int main() {
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < M - 1; ++j)
             g[i * 2 + 1][j * 2 + 2] = '|';
+}
 
-    if (3 * M + 1 - (M & 1) + N - 3 <= K) {
-        if (!(M & 1)) f('L');
-        for (int i = 0; i < (M - 1) / 2; ++i)
-            f("DLUL");
-        f("DD");
-        for (int i = 0; i < M - 1; ++i)
-            f('R');
-    }
-
+void output() {
     for (int i = 0; i < N * 2 + 1; ++i) {
         for (int j = 0; j < M * 2 + 1; ++j)
             cout << g[i][j];
         cout << '\n';
     }
+};
+
+int main() {
+    cin >> N >> M >> K;
+    y = M - 1;
+    if (K < N || (K - N) & 1) {
+        cout << "No\n";
+        return 0;
+    }
+
+    cout << "Yes\n";
+
+    initialize();
+
+    --K;
+
+    if (M == 1) {
+        for (int i = 0; i < N - 1; ++i) f('D');
+        output();
+        return 0;
+    }
+    if (N & 1) {
+        int t = min(K - (N - 3), M * 3 - !(M & 1) - 1) - 2;
+        for (int i = 0; i < t / 6; ++i) f("DLUL");
+        f('D');
+        for (int i = 0; i < (t % 6) / 2; ++i) f('L');
+        f('D');
+        for (int i = 0; i < (t % 6) / 2; ++i) f('R');
+        for (int i = 0; i < t / 6; ++i) f("RR");
+
+    } else {
+        int t = min(K - N + 2, M * 2 - 1) - 1;
+        for (int i = 0; i < t / 2; ++i) f('L');
+        f('D');
+        for (int i = 0; i < t / 2; ++i) f('R');
+    }
+    while (d()) {
+        int t = min(M * 2, K - d() + 2) - 2;
+        f('D');
+        for (int i = 0; i < t / 2; ++i) f('L');
+        f('D');
+        for (int i = 0; i < t / 2; ++i) f('R');
+    }
+    output();
 }
